@@ -1,15 +1,20 @@
-const jwt = require('jsonwebtoken')
-const config = require('./config')
+const jwt = require("jsonwebtoken");
+const config = require("./config");
 
-module.exports = (req,res,next) => {
-  const token = req.body.token || req.query.token || req.headers['x-access-token']
+module.exports = (req, res, next) => {
+  const token =
+    req.body.token || req.query.token || req.headers["authorization"];
   // decode token
+
+  console.log(req.headers);
   if (token) {
     // verifies secret and checks exp
     jwt.verify(token, config.secret, function(err, decoded) {
-        if (err) {
-            return res.status(401).json({"error": true, "message": 'Unauthorized access.' });
-        }
+      if (err) {
+        return res
+          .status(401)
+          .json({ error: true, message: "Unauthorized access." });
+      }
       req.decoded = decoded;
       next();
     });
@@ -17,8 +22,8 @@ module.exports = (req,res,next) => {
     // if there is no token
     // return an error
     return res.status(403).send({
-        "error": true,
-        "message": 'No token provided.'
+      error: true,
+      message: "No token provided."
     });
   }
-}
+};
